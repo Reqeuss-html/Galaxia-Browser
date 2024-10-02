@@ -21,6 +21,7 @@
             align-items: center;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         .container {
@@ -49,7 +50,7 @@
         .logo {
             width: 100px;
             margin-bottom: 10px;
-            animation: bounce 1.5s infinite; /* Animation de rebond */
+            animation: bounce 1.5s infinite;
         }
 
         @keyframes bounce {
@@ -140,61 +141,141 @@
         p {
             font-size: 1.2rem;
             margin-top: 10px;
-            animation: fadeInText 1s forwards; /* Animation de fade-in pour le texte */
-            opacity: 0; /* Début de l'opacité à 0 pour l'animation */
-            animation-delay: 1s; /* Délai avant l'animation */
+            animation: fadeInText 1s forwards;
+            opacity: 0;
+            animation-delay: 1s;
         }
 
         @keyframes fadeInText {
             to {
                 opacity: 1;
-                transform: translateY(10px); /* Légère élévation lors de l'apparition */
+                transform: translateY(10px);
             }
         }
+
+        /* Styles pour les étoiles */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            width: 2px;
+            height: 2px;
+            opacity: 0;
+            transition: transform 0.5s linear, opacity 0.5s ease-in-out;
+        }
+
+        /* Styles pour l'anneau de plasma */
+        .plasma-ring {
+            position: absolute;
+            border: 4px solid rgba(255, 100, 0, 0.7); /* Couleur du plasma */
+            border-radius: 50%;
+            width: 100px; /* Diamètre de l'anneau */
+            height: 100px; /* Diamètre de l'anneau */
+            opacity: 0.5;
+            animation: rotate 1s linear infinite;
+            pointer-events: none; /* Ignorer les événements de souris */
+            box-shadow: 0 0 20px rgba(255, 100, 0, 0.5);
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styles pour l'annonce */
+        .announcement {
+            position: absolute;
+            left: 10px; /* Positionner à gauche */
+            top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            opacity: 0.8;
+            animation: fadeInLeft 0.5s forwards;
+            z-index: 10;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
     </style>
 </head>
 <body>
+
+    <div class="announcement" id="announcement">Mise a jour de la page d'acceuil !</div>
+
     <div class="container">
         <header class="header">
             <img src="https://cdn.discordapp.com/attachments/1246167270464684084/1290653063153192980/image.png?ex=66fd3dd5&is=66fbec55&hm=feaf937e52d345cd0e810d3011654233c75785879f80455c62c0bb13ecf27f8b&" alt="Galaxia Logo" class="logo">
             <h1>Galaxia Browser</h1>
             <img src="https://cdn.discordapp.com/attachments/1246167270464684084/1290676635623755806/duckduckgo.png?ex=66fd53c9&is=66fc0249&hm=c3b947fa9ba98973d0b4d04ed7f4a3fa50fd9ad265ec65dcf586db955e5272ff&" alt="DuckDuckGo Logo" class="duckduckgo-logo">
-            <p>Utilise DuckDuckGo pour vos recherches !</p> <!-- Texte d'information -->
+            <p>Utilise DuckDuckGo pour vos recherches !</p>
         </header>
         <main>
             <input type="text" class="search-bar" placeholder="Rechercher...">
             <button class="search-button">Chercher</button>
         </main>
     </div>
-    <a href="https://discord.gg/j6JxGhVzeu" target="_blank">
+    <a href="https://discord.gg/fgVCX7ZsxN" target="_blank">
         <img src="https://cdn.discordapp.com/attachments/1246167270464684084/1290676314365231155/discord.png?ex=66fd537c&is=66fc01fc&hm=0233f7e97464e4018537c7db62f753589e693e94658c3ae23590dbabac02410e&" alt="Discord Logo" class="discord-logo" width="50">
     </a>
+
     <script>
-        const searchBar = document.querySelector('.search-bar');
+        let updateAvailable = true; // Mettre à true pour afficher l'annonce, false pour la cacher
 
-        searchBar.addEventListener('focus', function() {
-            searchBar.style.transform = 'scale(1.05)';
+        // Générer des étoiles
+        function generateStars() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Position aléatoire sur l'écran
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+
+            star.style.top = `${y}vh`;
+            star.style.left = `${x}vw`;
+
+            document.body.appendChild(star);
+
+            // Apparition et disparition douces des étoiles
+            setTimeout(() => {
+                star.style.opacity = 1;
+            }, Math.random() * 2000 + 1000); // Temps aléatoire entre 1 et 3 secondes
+
+            setTimeout(() => {
+                star.style.opacity = 0;
+                setTimeout(() => {
+                    star.remove(); // Supprimer l'étoile après sa disparition
+                }, 500); // Temps d'attente avant la suppression
+            }, Math.random() * 4000 + 3000); // Temps aléatoire entre 3 et 7 secondes
+        }
+
+        // Générer des étoiles à intervalles réguliers
+        setInterval(generateStars, 300); // 300ms pour générer une étoile
+
+        // Gérer le mouvement de l'anneau autour de la souris
+        const plasmaRing = document.createElement('div');
+        plasmaRing.classList.add('plasma-ring');
+        document.body.appendChild(plasmaRing);
+
+        document.addEventListener('mousemove', (e) => {
+            plasmaRing.style.left = `${e.pageX - 50}px`; // Centrer l'anneau autour de la souris
+            plasmaRing.style.top = `${e.pageY - 50}px`; // Centrer l'anneau autour de la souris
         });
 
-        searchBar.addEventListener('blur', function() {
-            searchBar.style.transform = 'scale(1)';
-        });
-
-        document.querySelector('.search-button').addEventListener('click', function() {
-            const query = searchBar.value;
-            if (query) {
-                // Redirection vers DuckDuckGo avec la recherche
-                window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-                searchBar.value = '';
-            }
-        });
-
-        // Ajouter une redirection au clic sur "Entrée" dans la barre de recherche
-        searchBar.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                document.querySelector('.search-button').click();
-            }
-        });
+        // Afficher ou masquer l'annonce
+        const announcement = document.getElementById('announcement');
+        if (!updateAvailable) {
+            announcement.style.display = 'none';
+        }
     </script>
 </body>
 </html>
